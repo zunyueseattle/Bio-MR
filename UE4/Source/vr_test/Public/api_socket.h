@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
+#include "Networking.h"
 #include "api_socket.generated.h"
 
 UCLASS()
@@ -31,4 +32,13 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void CreateFetchQuest(int items);
+
+
+	FTcpListener* Listener;
+	FSocket* ConnectionSocket;
+	FTimerHandle timer;
+
+	bool OpenConnection();
+	bool RecieveMessages(FSocket* socket, const FIPv4Endpoint& enpoint);
+	void TCPSocketListener();
 };
