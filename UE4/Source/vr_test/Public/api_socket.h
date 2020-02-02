@@ -50,17 +50,17 @@ public:
 	FORCEINLINE void ScreenMsg(const FString& Msg)
 	{
 		if (!ShowOnScreenDebugMessages) return;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *Msg);
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, *Msg, false, FVector2D(2.f, 2.f));
 	}
 	FORCEINLINE void ScreenMsg(const FString& Msg, const float Value)
 	{
 		if (!ShowOnScreenDebugMessages) return;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s %f"), *Msg, Value));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%s %f"), *Msg, Value), false, FVector2D(2.f, 2.f));
 	}
 	FORCEINLINE void ScreenMsg(const FString& Msg, const FString& Msg2)
 	{
 		if (!ShowOnScreenDebugMessages) return;
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s %s"), *Msg, *Msg2));
+		GEngine->AddOnScreenDebugMessage(-1, 10.f, FColor::Red, FString::Printf(TEXT("%s %s"), *Msg, *Msg2), false, FVector2D(2.f, 2.f));
 	}
 
 

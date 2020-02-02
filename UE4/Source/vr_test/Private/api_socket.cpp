@@ -76,7 +76,6 @@ bool Aapi_socket::StartUDPReceiver(
 		.AsReusable()
 		.BoundToEndpoint(Endpoint)
 		.WithReceiveBufferSize(BufferSize);
-	;
 
 	FTimespan ThreadWaitTime = FTimespan::FromMilliseconds(100);
 	UDPReceiver = new FUdpSocketReceiver(ListenSocket, ThreadWaitTime, TEXT("UDP RECEIVER"));
@@ -90,10 +89,9 @@ void Aapi_socket::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoin
 {
 	ScreenMsg("Received bytes", ArrayReaderPtr->Num());
 
-	/*FAnyCustomData Data;
-	*ArrayReaderPtr << Data;		//Now de-serializing! See AnyCustomData.h
+	FString parsedMessage(ANSI_TO_TCHAR(reinterpret_cast<const char*>(ArrayReaderPtr->GetData())));
+	ScreenMsg("Message= ", parsedMessage);
 
-	//BP Event
-	BPEvent_DataReceived(Data);*/
-	SetRainIntensity(1.f);
+	// Call function to handle this new message
+	//SetRainIntensity(1.f);
 }
