@@ -89,9 +89,53 @@ void Aapi_socket::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoin
 {
 	ScreenMsg("Received bytes", ArrayReaderPtr->Num());
 
-	FString parsedMessage(ANSI_TO_TCHAR(reinterpret_cast<const char*>(ArrayReaderPtr->GetData())));
+	// Copy the data to a mutable buffer
+	TArray<uint8> rawData;
+	rawData.Init(0, ArrayReaderPtr->Num());
+	for (int i = ArrayReaderPtr->Num() - 1; i >= 0; --i) {
+		rawData[i] = ArrayReaderPtr->Pop();
+	}
+
+	// Convert the data into a string
+	FString parsedMessage = StringFromBinaryArray(rawData);
 	ScreenMsg("Message= ", parsedMessage);
+
+	// Convert the string into a packet
+	UDPPacket packet;
+	CreatePacket(&packet, parsedMessage);
+	ScreenMsg(packet);
 
 	// Call function to handle this new message
 	//SetRainIntensity(1.f);
+}
+
+//Rama's String From Binary Array
+FString Aapi_socket::StringFromBinaryArray(TArray<uint8> BinaryArray)
+{
+	BinaryArray.Add(0); // Add 0 termination. Even if the string is already 0-terminated, it doesn't change the results.
+	// Create a string from a byte array. The string is expected to be 0 terminated (i.e. a byte set to 0).
+	// Use UTF8_TO_TCHAR if needed.
+	// If you happen to know the data is UTF-16 (USC2) formatted, you do not need any conversion to begin with.
+	// Otherwise you might have to write your own conversion algorithm to convert between multilingual UTF-16 planes.
+	return FString(ANSI_TO_TCHAR(reinterpret_cast<const char*>(BinaryArray.GetData())));
+}
+
+void Aapi_socket::CreatePacket(UDPPacket* out, FString& data)
+{
+	// Split the string on all semiciolons
+	TArray<FString> tokenizedString;
+	data.ParseIntoArray(tokenizedString, TEXT(";"));
+
+	// Store the metadata
+	out->m_sequenceNumber = FCString::Atoi(*tokenizedString[0]);
+	out->m_eventSource = tokenizedString[1];
+	out->m_sampleName = tokenizedString[2];
+	out->m_timeStamp = FCString::Atoi(*tokenizedString[3]);
+	out->m_mediaTime = FCString::Atoi(*tokenizedString[4]);
+	
+	// Remove these first 5 entries
+	tokenizedString.RemoveAt(0, 5, true);
+	
+	// Store the raw data
+	out->m_rawData = tokenizedString;
 }
