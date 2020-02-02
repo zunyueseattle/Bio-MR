@@ -106,7 +106,7 @@ void Aapi_socket::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoin
 	ScreenMsg(packet);
 
 	// Call function to handle this new message
-	//SetRainIntensity(1.f);
+	ProcessPacket(packet);
 }
 
 //Rama's String From Binary Array
@@ -138,4 +138,15 @@ void Aapi_socket::CreatePacket(UDPPacket* out, FString& data)
 	
 	// Store the raw data
 	out->m_rawData = tokenizedString;
+}
+
+void Aapi_socket::ProcessPacket(UDPPacket& packet)
+{
+	if (packet.m_eventSource == "EyeTracker") {
+		if (packet.m_sampleName == "EyeData") {
+			if (packet.m_sampleName.Len()) {
+				SetRainIntensity(0.5f);
+			}
+		}
+	}
 }

@@ -56,6 +56,7 @@ public:
 	// Functions for processing UDP packets
 	FString StringFromBinaryArray(TArray<uint8> BinaryArray);
 	void CreatePacket(UDPPacket* out, FString& data);
+	void ProcessPacket(UDPPacket& packet);
 
 
 
