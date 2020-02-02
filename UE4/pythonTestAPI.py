@@ -1,20 +1,13 @@
-import binascii
 import socket
-import sys
-import struct
 
+UDP_IP = "127.0.0.1" # Local host
+UDP_PORT = 60221 # Communication Port
+MESSAGE = "00000938;EyeTracker;EyeData;18332;15040;18319;1379;601;1379;601;"
 
-values = (2863311530, 1.0)
-packer = struct.Struct('I f')
-packed_data = packer.pack(*values)
- 
-print(packed_data);
+print ("UDP target IP:", UDP_IP)
+print ("UDP target port:", UDP_PORT)
+print ("message:", MESSAGE)
 
-# Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-
-# Connect the socket to the port where the server is listening
-server_address = ('localhost', 60221)
-sock.connect(server_address)
-
-sock.sendall(packed_data)
+sock = socket.socket(socket.AF_INET, # Internet
+                     socket.SOCK_DGRAM) # UDP
+sock.sendto(MESSAGE.encode('utf-8'), (UDP_IP, UDP_PORT))

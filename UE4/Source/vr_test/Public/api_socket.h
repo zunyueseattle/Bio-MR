@@ -33,12 +33,37 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void CreateFetchQuest(int items);
 
+	FSocket* ListenSocket = nullptr;
 
-	FTcpListener* Listener;
-	FSocket* ConnectionSocket;
-	FTimerHandle timer;
+	FUdpSocketReceiver* UDPReceiver = nullptr;
+	void Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt);
 
-	bool OpenConnection();
-	bool RecieveMessages(FSocket* socket, const FIPv4Endpoint& enpoint);
-	void TCPSocketListener();
+	bool StartUDPReceiver(
+		const FString& YourChosenSocketName,
+		const FString& TheIP,
+		const int32 ThePort
+	);
+
+	bool ShowOnScreenDebugMessages = true;
+
+	//ScreenMsg
+	FORCEINLINE void ScreenMsg(const FString& Msg)
+	{
+		if (!ShowOnScreenDebugMessages) return;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, *Msg);
+	}
+	FORCEINLINE void ScreenMsg(const FString& Msg, const float Value)
+	{
+		if (!ShowOnScreenDebugMessages) return;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s %f"), *Msg, Value));
+	}
+	FORCEINLINE void ScreenMsg(const FString& Msg, const FString& Msg2)
+	{
+		if (!ShowOnScreenDebugMessages) return;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("%s %s"), *Msg, *Msg2));
+	}
+
+
+	// Called whenever this actor is being removed from a level 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 };

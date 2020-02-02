@@ -21,7 +21,7 @@ void Aapi_socket::BeginPlay()
 	CreateFetchQuest(3);
 	CreateFetchQuest(2);
 	
-	OpenConnection();
+	StartUDPReceiver("Bio-Sensor Receiver", "127.0.0.1", 60221);
 }
 
 // Called every frame
@@ -31,67 +31,69 @@ void Aapi_socket::Tick(float DeltaTime)
 
 }
 
+void Aapi_socket::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+	//~~~~~~~~~~~~~~~~
 
+	delete UDPReceiver;
 
-// TCP Listener
-bool Aapi_socket::OpenConnection() {
+	// Clear all sockets!
+	// makes sure repeat plays in Editor dont hold on to old sockets!
+	if (ListenSocket)
+	{
+		ListenSocket->Close();
+		ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->DestroySocket(ListenSocket);
+	}
+}
 
-	FIPv4Endpoint Endpoint(FIPv4Address(127, 0, 0, 1), 60221);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-	Listener = new FTcpListener(Endpoint, FTimespan(8));
+//Rama's Start UDP Receiver
+bool Aapi_socket::StartUDPReceiver(
+	const FString& YourChosenSocketName,
+	const FString& TheIP,
+	const int32 ThePort
+) {
 
-	//Set Buffer Size
-	Listener->OnConnectionAccepted().BindUObject(this, &Aapi_socket::RecieveMessages);
+	ScreenMsg("RECEIVER INIT");
 
-	Listener->Init();
+	//~~~
 
+	FIPv4Address Addr;
+	FIPv4Address::Parse(TheIP, Addr);
+
+	//Create Socket
+	FIPv4Endpoint Endpoint(Addr, ThePort);
+
+	//BUFFER SIZE
+	int32 BufferSize = 2 * 1024 * 1024;
+
+	ListenSocket = FUdpSocketBuilder(*YourChosenSocketName)
+		.AsNonBlocking()
+		.AsReusable()
+		.BoundToEndpoint(Endpoint)
+		.WithReceiveBufferSize(BufferSize);
+	;
+
+	FTimespan ThreadWaitTime = FTimespan::FromMilliseconds(100);
+	UDPReceiver = new FUdpSocketReceiver(ListenSocket, ThreadWaitTime, TEXT("UDP RECEIVER"));
+	UDPReceiver->OnDataReceived().BindUObject(this, &Aapi_socket::Recv);
+	UDPReceiver->Start();
 
 	return true;
 }
 
-bool Aapi_socket::RecieveMessages(FSocket* socket, const FIPv4Endpoint& enpoint) {
+void Aapi_socket::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoint& EndPt)
+{
+	ScreenMsg("Received bytes", ArrayReaderPtr->Num());
 
-	if (!socket) {
-		return false;
-	}
+	/*FAnyCustomData Data;
+	*ArrayReaderPtr << Data;		//Now de-serializing! See AnyCustomData.h
 
-	ConnectionSocket = socket;
-
-	GetWorldTimerManager().SetTimer(timer, this, &Aapi_socket::TCPSocketListener, 0.01, true);
-
-	return true;
-}
-
-void Aapi_socket::TCPSocketListener() {
-	if (!ConnectionSocket) {
-		return;
-	}
-
-
-	//Binary Array!
-	TArray<uint8> ReceivedData;
-
-	uint32 Size;
-	while (ConnectionSocket->HasPendingData(Size))
-	{
-		ReceivedData.Init(0, Size);
-
-		int32 Read = 0;
-		ConnectionSocket->Recv(ReceivedData.GetData(), ReceivedData.Num(), Read);
-
-		//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Data Read! %d"), ReceivedData.Num()));
-	}
-
-	if (ReceivedData.Num() <= 0)
-	{
-		//No Data Received
-		return;
-	}
-
-	if (ReceivedData[0] == 10 && ReceivedData[1] == 10 && ReceivedData[2] == 10 && ReceivedData[3]) {
-		float f;
-		char b[] = { ReceivedData[7], ReceivedData[6], ReceivedData[5], ReceivedData[4] };
-		memcpy(&f, &b, sizeof(f));
-		SetRainIntensity(f);
-	}
+	//BP Event
+	BPEvent_DataReceived(Data);*/
+	SetRainIntensity(1.f);
 }
