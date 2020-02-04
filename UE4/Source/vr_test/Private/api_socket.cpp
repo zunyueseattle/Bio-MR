@@ -2,6 +2,8 @@
 
 
 #include "api_socket.h"
+#include "Misc/Paths.h"
+#include "Misc/FileHelper.h"
 
 // Sets default values
 Aapi_socket::Aapi_socket()
@@ -99,6 +101,7 @@ void Aapi_socket::Recv(const FArrayReaderPtr& ArrayReaderPtr, const FIPv4Endpoin
 	// Convert the data into a string
 	FString parsedMessage = StringFromBinaryArray(rawData);
 	ScreenMsg("Message= ", parsedMessage);
+	PrintToLog(parsedMessage);
 
 	// Convert the string into a packet
 	UDPPacket packet;
@@ -118,6 +121,22 @@ FString Aapi_socket::StringFromBinaryArray(TArray<uint8> BinaryArray)
 	// If you happen to know the data is UTF-16 (USC2) formatted, you do not need any conversion to begin with.
 	// Otherwise you might have to write your own conversion algorithm to convert between multilingual UTF-16 planes.
 	return FString(ANSI_TO_TCHAR(reinterpret_cast<const char*>(BinaryArray.GetData())));
+}
+
+void Aapi_socket::PrintToLog(FString toPrint)
+{
+	toPrint.Append("\r\n");
+	FString SaveDirectory = FPaths::ProjectLogDir();
+	FString FileName = FString("UDPLog.txt");
+
+
+	IPlatformFile& PlatformFile = FPlatformFileManager::Get().GetPlatformFile();
+	if (PlatformFile.CreateDirectoryTree(*SaveDirectory))
+	{
+		// Get absolute file path
+		FString AbsoluteFilePath = SaveDirectory + "/" + FileName;
+		FFileHelper::SaveStringToFile(toPrint, *AbsoluteFilePath, FFileHelper::EEncodingOptions::AutoDetect, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
+	}
 }
 
 void Aapi_socket::CreatePacket(UDPPacket* out, FString& data)

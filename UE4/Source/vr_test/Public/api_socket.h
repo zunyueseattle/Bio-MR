@@ -91,6 +91,7 @@ public:
 			GEngine->AddOnScreenDebugMessage(-1, OnScreenDebugMessageTimeout, FColor::Red, FString::Printf(TEXT("Data[%d]: %s"), i, *packet.m_rawData[i]), false, FVector2D(2.f, 2.f));
 		}
 	}
+	void PrintToLog(FString toPrint);
 
 
 	// Called whenever this actor is being removed from a level 
