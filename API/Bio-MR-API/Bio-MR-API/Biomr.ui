@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>471</width>
-    <height>396</height>
+    <width>599</width>
+    <height>515</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,14 @@
       <item>
        <widget class="QLabel" name="label_3">
         <property name="text">
-         <string>Trigger1......................................</string>
+         <string>Set Rain Intensity to 0.5 if HR &gt; 100 </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_3">
+        <property name="text">
+         <string>Add Trigger</string>
         </property>
        </widget>
       </item>
@@ -163,8 +170,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>471</width>
-     <height>22</height>
+     <width>599</width>
+     <height>26</height>
     </rect>
    </property>
   </widget>
