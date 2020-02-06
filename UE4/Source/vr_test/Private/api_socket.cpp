@@ -23,7 +23,7 @@ void Aapi_socket::BeginPlay()
 	CreateFetchQuest(3);
 	CreateFetchQuest(2);
 	
-	StartUDPReceiver("Bio-Sensor Receiver", "127.0.0.1", 60221);
+	StartUDPReceiver("Bio-Sensor Receiver", "127.0.0.1", 60002);
 }
 
 // Called every frame
@@ -146,26 +146,21 @@ void Aapi_socket::CreatePacket(UDPPacket* out, FString& data)
 	data.ParseIntoArray(tokenizedString, TEXT(";"));
 
 	// Store the metadata
-	out->m_sequenceNumber = FCString::Atoi(*tokenizedString[0]);
-	out->m_eventSource = tokenizedString[1];
-	out->m_sampleName = tokenizedString[2];
-	out->m_timeStamp = FCString::Atoi(*tokenizedString[3]);
-	out->m_mediaTime = FCString::Atoi(*tokenizedString[4]);
+	out->m_commandName = tokenizedString[0];
 	
 	// Remove these first 5 entries
-	tokenizedString.RemoveAt(0, 5, true);
+	tokenizedString.RemoveAt(0, 1, true);
 	
 	// Store the raw data
-	out->m_rawData = tokenizedString;
+	out->m_arguments = tokenizedString;
 }
 
 void Aapi_socket::ProcessPacket(UDPPacket& packet)
 {
-	if (packet.m_eventSource == "EyeTracker") {
-		if (packet.m_sampleName == "EyeData") {
-			if (packet.m_sampleName.Len()) {
-				SetRainIntensity(0.5f);
-			}
+	if (packet.m_commandName == "RainIntensity") {
+		if (packet.m_arguments.Num() > 0) {
+			float val = FCString::Atof(*packet.m_arguments[0]);
+			SetRainIntensity(val);
 		}
 	}
 }

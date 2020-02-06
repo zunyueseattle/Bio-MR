@@ -34,7 +34,9 @@ void Biomr::ProcessImotionsDatagram(QNetworkDatagram& datagram)
 	QString dataString = QString::fromUtf8(rawData);
 	QStringList splitData = dataString.split(";");
 
-	QString response = "RainIntensity;1;";
+	// Add Qiu's splitting code
+
+	QString response = "RainIntensity;0.5;";
 	SendGameEngineDatagram(response);
 }
 
