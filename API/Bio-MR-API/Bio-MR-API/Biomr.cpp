@@ -7,6 +7,15 @@ Biomr::Biomr(QWidget *parent)
 {
 	ui.setupUi(this);
 
+	// Set up sliders with min/max values
+	ui.RainIntensitySlider->SetMaxValueDouble(1.0);
+	ui.RainIntensitySlider->SetMinValueDouble(0.0);
+	ui.RainIntensitySlider->SetNumTicks(100);
+
+	ui.DayNightCycleSlider->SetMaxValueDouble(60);
+	ui.DayNightCycleSlider->SetMinValueDouble(0.05);
+	ui.DayNightCycleSlider->SetNumTicks(1000);
+
 
 	// Set up sockets
 	m_pIMotionsListener = new QUdpSocket();
@@ -34,10 +43,9 @@ void Biomr::ProcessImotionsDatagram(QNetworkDatagram& datagram)
 	QString dataString = QString::fromUtf8(rawData);
 	QStringList splitData = dataString.split(";");
 
-	// Add Qiu's splitting code
+	// Add Qiu's command parsing code
 
-	QString response = "RainIntensity;0.5;";
-	SendGameEngineDatagram(response);
+	SetRainIntensity(0.5);
 }
 
 
@@ -46,4 +54,10 @@ void Biomr::SendGameEngineDatagram(QString& datagram)
 {
 	QByteArray& rawData = datagram.toUtf8();
 	m_pGameEngineSender->writeDatagram(rawData, QHostAddress::LocalHost, SEND_TO_GAME_ENGINE_PORT);
+}
+
+void Biomr::SetRainIntensity(float val)
+{
+	QString command = QString("RainIntensity;%1").arg(val);
+	SendGameEngineDatagram(command);
 }
