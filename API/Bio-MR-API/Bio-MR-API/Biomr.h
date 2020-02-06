@@ -21,6 +21,8 @@ public:
 	void ProcessImotionsDatagram(QNetworkDatagram& datagram);
 
 	void SendGameEngineDatagram(QString& datagram);
+
+public slots:
 	void SetRainIntensity(double val);
 
 private:
