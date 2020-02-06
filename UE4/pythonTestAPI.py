@@ -1,7 +1,7 @@
 import socket
 
 UDP_IP = "127.0.0.1" # Local host
-UDP_PORT = 60221 # Communication Port
+UDP_PORT = 60000 # Communication Port
 MESSAGE = "00000938;EyeTracker;EyeData;18332;15040;18319;1379;601;1379;601;"
 
 print ("UDP target IP:", UDP_IP)
