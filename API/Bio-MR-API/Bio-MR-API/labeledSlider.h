@@ -5,6 +5,7 @@
 #include <QLabel>
 
 class LabeledSlider : public QWidget {
+	Q_OBJECT
 public:
 	LabeledSlider(QWidget* parent = nullptr, Qt::WindowFlags f = Qt::WindowFlags());
 

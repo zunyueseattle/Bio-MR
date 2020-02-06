@@ -35,6 +35,9 @@
     <QtMoc Include="Biomr.h">
       <Filter>Header Files</Filter>
     </QtMoc>
+    <QtMoc Include="labeledSlider.h">
+      <Filter>Header Files</Filter>
+    </QtMoc>
   </ItemGroup>
   <ItemGroup>
     <QtUic Include="Biomr.ui">
@@ -45,10 +48,5 @@
     <QtRcc Include="Biomr.qrc">
       <Filter>Resource Files</Filter>
     </QtRcc>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="labeledSlider.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
 </Project>
