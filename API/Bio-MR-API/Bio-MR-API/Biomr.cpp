@@ -1,5 +1,6 @@
 #include "Biomr.h"
 
+#include "labeledSlider.h"
 #include <QNetworkDatagram>
 
 Biomr::Biomr(QWidget *parent)
@@ -11,6 +12,7 @@ Biomr::Biomr(QWidget *parent)
 	ui.RainIntensitySlider->SetMaxValueDouble(1.0);
 	ui.RainIntensitySlider->SetMinValueDouble(0.0);
 	ui.RainIntensitySlider->SetNumTicks(100);
+	connect(ui.RainIntensitySlider, &LabeledSlider::valueChanged, this, &Biomr::SetRainIntensity);
 
 	ui.DayNightCycleSlider->SetMaxValueDouble(60);
 	ui.DayNightCycleSlider->SetMinValueDouble(0.05);
@@ -56,7 +58,7 @@ void Biomr::SendGameEngineDatagram(QString& datagram)
 	m_pGameEngineSender->writeDatagram(rawData, QHostAddress::LocalHost, SEND_TO_GAME_ENGINE_PORT);
 }
 
-void Biomr::SetRainIntensity(float val)
+void Biomr::SetRainIntensity(double val)
 {
 	QString command = QString("RainIntensity;%1").arg(val);
 	SendGameEngineDatagram(command);

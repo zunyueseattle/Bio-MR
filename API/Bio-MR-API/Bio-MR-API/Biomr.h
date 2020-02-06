@@ -21,7 +21,7 @@ public:
 	void ProcessImotionsDatagram(QNetworkDatagram& datagram);
 
 	void SendGameEngineDatagram(QString& datagram);
-	void SetRainIntensity(float val);
+	void SetRainIntensity(double val);
 
 private:
 	Ui::BiomrClass ui;

@@ -13,6 +13,10 @@ public:
 	inline void SetNumTicks(int val) { m_pSlider->setMaximum(val); }
 	double GetDoubleValue();
 
+signals:
+	void valueChanged(double value);
+
+
 private:
 	void OnSliderValueChanged(int value);
 

@@ -50,4 +50,6 @@ void LabeledSlider::OnSliderValueChanged(int /*value*/)
 
 	QString newLabel = QString("%1").arg(doubleValue, 0, 'f', decimals);
 	m_pLabel->setText(newLabel);
+
+	emit valueChanged(doubleValue);
 }
