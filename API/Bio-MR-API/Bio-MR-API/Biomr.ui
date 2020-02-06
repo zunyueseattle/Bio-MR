@@ -108,10 +108,14 @@
        </widget>
       </item>
       <item>
-       <widget class="QSlider" name="Rain_Intensity_Slider">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       <widget class="LabeledSlider" name="widget_2" native="true">
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>15</height>
+         </size>
         </property>
+        <layout class="QHBoxLayout" name="horizontalLayout_3"/>
        </widget>
       </item>
       <item>
@@ -178,6 +182,14 @@
   <widget class="QStatusBar" name="statusBar"/>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>LabeledSlider</class>
+   <extends>QWidget</extends>
+   <header>labeledslider.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="Biomr.qrc"/>
  </resources>
